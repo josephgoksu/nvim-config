@@ -53,3 +53,11 @@ vim.opt.expandtab = true
 vim.opt.softtabstop = 4
 
 vim.opt.guicursor = "n-v-i-c-r:block"
+
+require("telescope").setup {
+   defaults = {
+      file_ignore_patterns = {
+         "node_modules",
+      },
+   },
+}
