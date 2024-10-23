@@ -1,27 +1,14 @@
-local formatting = require("configs.formatting")
+local formatting = require "configs.formatting"
 
 return {
    {
       "stevearc/conform.nvim",
       event = "BufWritePre",
       opts = {
-         formatters_by_ft = formatting.formatters,
-         formatters = formatting.formatter_config,
-         format_on_save = formatting.format_on_save,
+         formatters_by_ft = formatting.conform.formatters_by_ft,
+         formatters = formatting.conform.formatters,
+         format_on_save = formatting.conform.format_on_save,
       },
-   },
-   {
-      "neovim/nvim-lspconfig",
-      config = function()
-         require "configs.lspconfig"
-      end,
-   },
-   {
-      "nvim-treesitter/nvim-treesitter",
-      event = { "BufReadPre", "BufNewFile" },
-      config = function()
-         require "configs.treesitter"
-      end,
    },
    {
       "nvim-treesitter/nvim-treesitter",

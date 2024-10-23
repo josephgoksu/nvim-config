@@ -15,15 +15,29 @@ local options = {
       "gosum",
       "gotmpl",
       "gowork",
+      "typescript",
+      "javascript",
+      "python",
+      "json",
+      "jsonc",
+      "html",
+      "css",
+      "scss",
    },
 
    highlight = {
       enable = true,
       use_languagetree = true,
+      additional_vim_regex_highlighting = { "markdown" },
    },
 
    indent = {
       enable = true,
+   },
+
+   context_commentstring = {
+      enable = true,
+      enable_autocmd = false,
    },
 }
 

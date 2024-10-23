@@ -1,4 +1,2 @@
-require("mason-conform").setup {
-   -- List of formatters to ignore during install
-   ignore_install = {},
-}
+local formatting = require("configs.formatting")
+require("mason-conform").setup(formatting.mason)
