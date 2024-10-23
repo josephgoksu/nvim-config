@@ -56,4 +56,9 @@ return {
          require "configs.mason-lint"
       end,
    },
+   {
+      "tpope/vim-fugitive",
+      cmd = { "Git", "G", "Gdiffsplit", "Gvdiffsplit", "Gwrite", "Gread" },
+      event = "VeryLazy",
+   },
 }
