@@ -26,23 +26,18 @@ M.conform = {
          prepend_args = { "--max-len=80" },
       },
       eslint_d = {
-         lintCommand = "eslint_d -f visualstudio --stdin --stdin-filename ${INPUT}",
-         lintFormats = { "%f(%l,%c): %tarning %m", "%f(%l,%c): %trror %m" },
-         lintStdin = true,
-         lintIgnoreExitCode = true,
-         lintSource = "eslint",
          formatCommand = "eslint_d --fix-to-stdout --stdin --stdin-filename ${INPUT}",
          formatStdin = true,
+         timeout = 10000,
       },
       prettier = {
          formatCommand = 'prettierd "${INPUT}"',
          formatStdin = true,
       },
-      -- Add other formatter-specific configs here
    },
 
    format_on_save = {
-      timeout_ms = 500,
+      timeout_ms = 10000,
       lsp_fallback = true,
    },
 }
