@@ -7,14 +7,14 @@ M.conform = {
       go = { "gofumpt", "goimports-reviser", "golines" },
       css = { "prettier" },
       html = { "prettier" },
-      javascript = { "prettier", "eslint_d" },
-      javascriptreact = { "prettier", "eslint_d" },
-      typescript = { "prettier", "eslint_d" },
-      typescriptreact = { "prettier", "eslint_d" },
+      javascript = { "prettier" },
+      javascriptreact = { "prettier" },
+      typescript = { "prettier" },
+      typescriptreact = { "prettier" },
       json = { "prettier", "jq" },
       yaml = { "prettier" },
       markdown = { "prettier" },
-      astro = { "prettier", "eslint_d" },
+      astro = { "prettier" },
       sh = { "shellcheck" },
    },
 
@@ -25,11 +25,6 @@ M.conform = {
       golines = {
          prepend_args = { "--max-len=80" },
       },
-      eslint_d = {
-         formatCommand = "eslint_d --fix-to-stdout --stdin --stdin-filename ${INPUT}",
-         formatStdin = true,
-         timeout = 10000,
-      },
       prettier = {
          formatCommand = 'prettierd "${INPUT}"',
          formatStdin = true,
@@ -37,7 +32,7 @@ M.conform = {
    },
 
    format_on_save = {
-      timeout_ms = 10000,
+      timeout_ms = 500,
       lsp_fallback = true,
    },
 }
