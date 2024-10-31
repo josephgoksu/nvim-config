@@ -66,7 +66,7 @@ require("nvim-tree").setup {
       highlight_bookmarks = "none",
       highlight_clipboard = "name",
       indent_markers = {
-         enable = false,
+         enable = true,
          inline_arrows = true,
          icons = {
             corner = "└",
@@ -137,9 +137,9 @@ require("nvim-tree").setup {
       auto_open = true,
    },
    update_focused_file = {
-      enable = false,
+      enable = true,
       update_root = {
-         enable = false,
+         enable = true,
          ignore_list = {},
       },
       exclude = false,
