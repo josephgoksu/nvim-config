@@ -10,7 +10,7 @@ vim.keymap.set("n", "]d", vim.diagnostic.goto_next)
 vim.keymap.set("n", "<leader>q", vim.diagnostic.setloclist)
 
 -- list of all servers configured.
-lspconfig.servers = { "lua_ls", "ts_ls", "gopls" }
+lspconfig.servers = { "lua_ls", "ts_ls", "gopls", "clojure_lsp" }
 
 -- list of servers configured with default config.
 local default_servers = { "html", "cssls", "clangd", "pyright", "bashls", "awk_ls" }
@@ -136,3 +136,5 @@ lspconfig.eslint.setup {
       },
    },
 }
+
+require("lspconfig").clojure_lsp.setup {}
