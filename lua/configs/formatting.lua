@@ -15,7 +15,6 @@ M.conform = {
       yaml = { "prettier" },
       markdown = { "prettier" },
       astro = { "prettier" },
-      sh = { "shellcheck" },
    },
 
    formatters = {
