@@ -203,4 +203,110 @@ return {
          { "<leader>xQ", "<cmd>TroubleToggle quickfix<cr>", desc = "Quickfix List" },
       },
    },
+   {
+      "mfussenegger/nvim-dap",
+      event = "VeryLazy",
+   },
+   {
+      "leoluz/nvim-dap-go",
+      ft = "go",
+      dependencies = "mfussenegger/nvim-dap",
+      config = function(_, opts)
+         require("dap-go").setup(opts)
+
+         -- Add keymaps
+         vim.keymap.set("n", "<F5>", require("dap").continue)
+         vim.keymap.set("n", "<F10>", require("dap").step_over)
+         vim.keymap.set("n", "<F11>", require("dap").step_into)
+         vim.keymap.set("n", "<F12>", require("dap").step_out)
+         vim.keymap.set("n", "<leader>b", require("dap").toggle_breakpoint)
+      end,
+   },
+   {
+      "rcarriga/nvim-dap-ui",
+      event = "VeryLazy",
+      dependencies = {
+         "mfussenegger/nvim-dap",
+         "nvim-neotest/nvim-nio",
+      },
+      config = function()
+         local dap = require "dap"
+         local dapui = require "dapui"
+         dapui.setup()
+
+         -- Auto open/close DAP UI
+         dap.listeners.after.event_initialized["dapui_config"] = function()
+            dapui.open()
+         end
+         dap.listeners.before.event_terminated["dapui_config"] = function()
+            dapui.close()
+         end
+      end,
+   },
+   {
+      "Olical/conjure",
+      ft = { "clojure", "edn" },
+      event = "LspAttach",
+      init = function()
+         local conjure = {
+            ["conjure#filetype#rust"] = false,
+            ["conjure#filetype#python"] = false,
+            ["conjure#debug"] = false,
+            ["conjure#highlight#enabled"] = true,
+            ["conjure#mapping#doc_word"] = "gk",
+            ["conjure#extract#tree_sitter#enabled"] = true,
+            ["conjure#log#treesitter"] = false,
+            ["conjure#client_on_load"] = false,
+            ["conjure#client#clojure#nrepl#connection#auto_repl#enabled"] = false,
+            ["conjure#client#clojure#nrepl#refresh#backend"] = "clj-reload",
+            ["conjure#log#wrap"] = true,
+         }
+
+         for key, value in pairs(conjure) do
+            vim.g[key] = value
+         end
+         require("conjure.main").main()
+      end,
+   },
+   {
+      "julienvincent/nvim-paredit",
+      config = function()
+         local paredit = require "nvim-paredit"
+         paredit.setup {
+            keys = {
+               ["<localleader>>"] = { paredit.api.slurp_forwards, "Slurp forwards" },
+               ["<localleader>("] = { paredit.api.slurp_backwards, "Slurp backwards" },
+
+               ["<localleader><"] = { paredit.api.barf_forwards, "Barf forwards" },
+               ["<localleader>)"] = { paredit.api.barf_backwards, "Barf backwards" },
+
+               [">e"] = { paredit.api.drag_element_forwards, "Drag element right" },
+               ["<e"] = { paredit.api.drag_element_backwards, "Drag element left" },
+
+               [">f"] = { paredit.api.drag_form_forwards, "Drag form right" },
+               ["<f"] = { paredit.api.drag_form_backwards, "Drag form left" },
+
+               ["<localleader>o"] = { paredit.api.raise_form, "Raise form" },
+               ["<localleader>O"] = { paredit.api.raise_element, "Raise element" },
+
+               ["E"] = {
+                  paredit.api.move_to_next_element,
+                  "Jump to next element tail",
+                  -- by default all keybindings are dot repeatable
+                  repeatable = false,
+                  mode = { "n", "x", "o", "v" },
+               },
+               ["B"] = {
+                  paredit.api.move_to_prev_element,
+                  "Jump to previous element head",
+                  repeatable = false,
+                  mode = { "n", "x", "o", "v" },
+               },
+            },
+            indent = {
+               enabled = true,
+            },
+         }
+      end,
+   },
 }

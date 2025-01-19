@@ -6,7 +6,7 @@
 local M = {}
 
 M.base46 = {
-   theme = "onedark",
+   theme = "tokyodark",
    hl_override = {
       -- Rainbow colors customized for better TSX visibility
       RainbowDelimiterRed = { fg = "#E06C75" },
