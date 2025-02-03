@@ -309,4 +309,7 @@ return {
          }
       end,
    },
+   {
+      import = "plugins.kubernetes"
+   },
 }

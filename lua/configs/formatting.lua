@@ -12,9 +12,12 @@ M.conform = {
       typescript = { "prettier" },
       typescriptreact = { "prettier" },
       json = { "prettier", "jq" },
-      yaml = { "prettier" },
+      yaml = { "yamlfmt" },
       markdown = { "prettier" },
       astro = { "prettier" },
+      helm = { "helmfmt" },
+      terraform = { "terraform_fmt" },
+      dockerfile = { "dockerfmt" },
    },
 
    formatters = {
@@ -28,6 +31,25 @@ M.conform = {
          formatCommand = 'prettierd "${INPUT}"',
          formatStdin = true,
       },
+      yamlfmt = {
+         command = "yamlfmt",
+         args = { "--retain-line-breaks", "-" },
+         stdin = true,
+      },
+      dockerfmt = {
+         command = "dockfmt",
+         args = { "fmt", "$FILENAME" },
+         runtime_condition = function()
+            return vim.fn.executable("dockfmt") == 1
+         end
+      },
+      helmfmt = {
+         command = "helm",
+         args = { "template", "$FILENAME" },
+         runtime_condition = function()
+            return vim.fn.executable("helm") == 1
+         end
+      }
    },
 
    format_on_save = {

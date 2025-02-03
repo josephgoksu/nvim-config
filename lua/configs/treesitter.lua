@@ -23,6 +23,9 @@ local options = {
       "html",
       "css",
       "scss",
+      "helm",
+      "hcl",
+      "dockerfile",
    },
 
    highlight = {

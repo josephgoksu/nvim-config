@@ -10,7 +10,7 @@ vim.keymap.set("n", "]d", vim.diagnostic.goto_next)
 vim.keymap.set("n", "<leader>q", vim.diagnostic.setloclist)
 
 -- list of all servers configured.
-lspconfig.servers = { "lua_ls", "ts_ls", "gopls", "clojure_lsp", "prismals" }
+lspconfig.servers = { "lua_ls", "ts_ls", "gopls", "clojure_lsp", "prismals", "yamlls", "helm_ls", "terraformls", "dockerls" }
 
 -- list of servers configured with default config.
 local default_servers = { "html", "cssls", "clangd", "pyright", "bashls", "awk_ls" }
@@ -140,3 +140,39 @@ lspconfig.eslint.setup {
 require("lspconfig").clojure_lsp.setup {}
 
 require("lspconfig").prismals.setup {}
+
+-- Kubernetes-specific YAML configuration
+lspconfig.yamlls.setup {
+   on_attach = on_attach,
+   capabilities = capabilities,
+   settings = {
+      yaml = {
+         validate = true,
+         completion = true,
+         hover = true,
+         schemas = {
+            kubernetes = {"*.yaml", "*.yml", "!kustomization*"},
+            ["https://json.schemastore.org/kustomization.json"] = "kustomization.y*ml",
+         },
+         schemaDownload = {
+            enable = true,
+            url_map = {
+               kubernetes = "https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.29.4-standalone-strict",
+            }
+         },
+      }
+   }
+}
+
+-- Add Helm LSP configuration
+lspconfig.helm_ls.setup {
+   on_attach = on_attach,
+   capabilities = capabilities,
+   filetypes = { "helm" },
+   settings = {
+      helm = {
+         enableLibraryKubernetes = true,
+         lint = { enable = true }
+      }
+   }
+}

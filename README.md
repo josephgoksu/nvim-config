@@ -41,6 +41,12 @@ This repository contains my custom configuration for NvChad. It uses the main Nv
    - HTML/CSS (prettier)
    - JSON/YAML (prettier, jq)
    - Shell scripts (shellcheck)
+   - Kubernetes (helm_ls, yamlls)
+   - Terraform (terraformls)
+   - Docker (dockerls)
+   - Helm templates (helmfmt)
+   - YAML (yamlfmt, kubeconform)
+   - Terraform (terraform_fmt)
    - And more...
 
 2. **LSP Support** for multiple languages:
@@ -92,6 +98,21 @@ This repository contains my custom configuration for NvChad. It uses the main Nv
 - A C compiler for Treesitter
 - Node.js for LSP servers
 - Various language-specific tools (will be installed automatically by Mason)
+- Kubernetes-specific tools:
+
+  ```bash
+  # Docker formatting
+  go install github.com/jessfraz/dockfmt@latest
+
+  # Kubescape
+  brew install kubescape
+
+  # Kubeconform
+  brew install kubeconform
+
+  # Helm (v3.8+ required for fmt command)
+  brew install helm
+  ```
 
 ## Credits
 
