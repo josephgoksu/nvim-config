@@ -1,55 +1,84 @@
 # My Nvim Configuration
 
-This repository contains my custom configuration for NvChad. It uses the main NvChad repository as a plugin and extends its functionality.
+This repository contains my custom configuration for NvChad. It uses the main NvChad repository as a plugin and extends its functionality with a simplified, maintainable structure and performance optimizations.
 
 ## Structure
 
 ### Core Files
 
-- `init.lua` - Main entry point for Neovim configuration
-- `lua/options.lua` - Custom Vim options (extends NvChad defaults)
-- `lua/mappings.lua` - Custom key mappings
-- `lua/chadrc.lua` - NvChad theme and UI configurations
+- `init.lua` - Streamlined entry point with module caching for faster startup
+- `lua/options.lua` - Performance-optimized Vim options and UI settings
+- `lua/mappings.lua` - Productivity-focused key mappings with clear documentation
+- `lua/chadrc.lua` - NvChad theme and highlight configurations
 
 ### Plugin Management
 
-- `lua/plugins/init.lua` - Plugin declarations and configurations using lazy.nvim
-- `lua/configs/lazy.lua` - Lazy plugin manager settings and optimizations
+- `lua/plugins/init.lua` - Organized plugin declarations with optimized lazy-loading
+- `lua/configs/lazy.lua` - Optimized lazy plugin manager settings
 
 ### LSP Configuration
 
-- `lua/configs/lspconfig.lua` - Language Server Protocol configurations
+- `lua/configs/lspconfig.lua` - Consolidated Language Server Protocol configurations
 - `lua/configs/mason-lspconfig.lua` - Automatic LSP server installation management
 
 ### Code Quality Tools
 
-- `lua/configs/formatting.lua` - Consolidated formatting configurations (conform.nvim and mason-conform)
-- `lua/configs/lint.lua` - Linting configurations with nvim-lint
-- `lua/configs/mason-lint.lua` - Automatic linter installation management
+- `lua/configs/formatting.lua` - Centralized formatting configurations
+- `lua/configs/lint.lua` - Organized linting configurations with clear documentation
+- `lua/configs/mason-lint.lua` - Streamlined linter installation management
 
 ### Syntax Highlighting
 
-- `lua/configs/treesitter.lua` - Treesitter configurations for better syntax highlighting
+- `lua/configs/treesitter.lua` - Performance-optimized treesitter with syntax folding and text objects
 
 ## Key Features
 
-1. **Formatting Support** via conform.nvim for:
+1. **Performance Optimizations**
+
+   - Module bytecode caching with `vim.loader.enable()`
+   - Improved startup time with deferred loading
+   - Optimized treesitter for large files
+   - Better lazy-loading of plugins based on actual usage
+   - Reduced UI redrawing with `lazyredraw` and other settings
+   - Faster timeouts for improved responsiveness
+
+2. **Simplified Configuration Structure**
+
+   - Well-documented configuration files with clear headers
+   - Removed redundant settings and defaults
+   - Consolidated related settings for easier maintenance
+   - Improved organization of language-specific configurations
+   - Logically grouped plugins by functionality
+
+3. **Enhanced Code Navigation**
+
+   - Treesitter-based text objects for semantic code selection
+   - Function and class navigation with `[f`, `]f`, `[c`, `]c`
+   - Incremental selection based on syntax nodes
+   - Better window and buffer navigation keymaps
+   - NvimTree file explorer optimized for performance
+
+4. **Productivity Improvements**
+
+   - Intuitive keymaps for window resizing and navigation
+   - Visual mode enhancements for indentation and moving lines
+   - Faster buffer switching and file saving
+   - Improved LSP integration and code action shortcuts
+   - Automatic formatting and linting with minimal configuration
+
+5. **Formatting and Linting**
 
    - Lua (stylua)
    - Go (gofumpt, goimports-reviser, golines)
-   - JavaScript/TypeScript (prettier, eslint_d)
+   - JavaScript/TypeScript (prettier, eslint)
    - HTML/CSS (prettier)
    - JSON/YAML (prettier, jq)
-   - Shell scripts (shellcheck)
-   - Kubernetes (helm_ls, yamlls)
-   - Terraform (terraformls)
-   - Docker (dockerls)
-   - Helm templates (helmfmt)
-   - YAML (yamlfmt, kubeconform)
+   - Kubernetes (yamlfmt, kubeconform)
    - Terraform (terraform_fmt)
-   - And more...
+   - Docker (dockerfmt)
+   - Helm templates (helmfmt)
 
-2. **LSP Support** for multiple languages:
+6. **LSP Support**
 
    - Lua (lua_ls)
    - Go (gopls)
@@ -58,25 +87,28 @@ This repository contains my custom configuration for NvChad. It uses the main Nv
    - C/C++ (clangd)
    - HTML/CSS
    - Bash (bashls)
-   - AWK (awk_ls)
+   - YAML (yamlls with Kubernetes schemas)
+   - Helm (helm_ls)
+   - Terraform (terraformls)
+   - Docker (dockerls)
 
-3. **Linting Integration** with nvim-lint:
+7. **UI Enhancements**
+   - Improved UI components with lazy-loaded dressing.nvim
+   - Better diagnostic display with Trouble.nvim
+   - Rainbow delimiters for nested structures
+   - Code context display for current function/class
+   - Indentation guides with scope highlighting
 
-   - Lua (luacheck)
-   - Automatic linter installation via mason-nvim-lint
+## Maintenance Benefits
 
-4. **Automatic Tool Management** via Mason for:
+This configuration has been streamlined for easier maintenance:
 
-   - LSP servers (mason-lspconfig)
-   - Formatters (mason-conform)
-   - Linters (mason-nvim-lint)
-
-5. **Editor Features**:
-   - Telescope integration with file ignore patterns
-   - Custom key mappings (including `;` for command mode)
-   - Block cursor in all modes
-   - 4-space indentation
-   - Line numbers enabled
+- **Clear Documentation**: Each file includes a header explaining its purpose
+- **Reduced Redundancy**: Duplicate configurations removed
+- **Consistent Style**: Uniform code organization across files
+- **Modular Structure**: Related settings kept together
+- **Performance Focused**: Optimizations for faster startup and response
+- **Selective Defaults**: Only overriding necessary settings
 
 ## Installation
 

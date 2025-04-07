@@ -1,3 +1,13 @@
+--[[
+  Formatting configuration
+  This file centralizes all formatting-related configurations.
+  It defines:
+  - Which formatters to use for which file types
+  - Custom formatter configurations
+  - Format-on-save settings
+  - Mason formatter installation settings
+--]]
+
 local M = {}
 
 -- Formatter configurations using conform.nvim

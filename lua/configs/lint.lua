@@ -1,17 +1,27 @@
+--[[
+  Linting configuration
+  This file configures nvim-lint with language-specific linters.
+  It also defines custom linter configurations for specialized tools.
+--]]
+
 local lint = require "lint"
 
+-- Configure which linters to use for each file type
 lint.linters_by_ft = {
    lua = { "luacheck" },
-   yaml = {
-      "kubeconform",
-      "kubescape"
-   },
+   yaml = { "kubeconform", "kubescape" },
    helm = { "helm" },
    dockerfile = { "hadolint" },
 }
 
-lint.linters.luacheck.args = { "--globals", "love", "vim", "--formatter", "plain", "--codes", "--ranges", "-" }
+-- Custom linter configurations
+lint.linters.luacheck.args = {
+   "--globals", "love", "vim",
+   "--formatter", "plain",
+   "--codes", "--ranges", "-"
+}
 
+-- Kubernetes linters
 lint.linters.kubescape = {
    cmd = "kubescape",
    args = {
@@ -43,6 +53,7 @@ lint.linters.kubeconform = {
    ),
 }
 
+-- Run linters automatically
 vim.api.nvim_create_autocmd({ "BufEnter", "BufWritePost", "InsertLeave" }, {
    pattern = "*.yaml",
    callback = function()

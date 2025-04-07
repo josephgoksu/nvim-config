@@ -1,8 +1,12 @@
+-- Enable module caching and bytecode compilation for faster startup
+vim.loader.enable()
+
+-- Set essential global variables
 vim.g.base46_cache = vim.fn.stdpath "data" .. "/base46/"
 vim.g.mapleader = " "
-
 vim.g.maplocalleader = ","
--- bootstrap lazy and all plugins
+
+-- Bootstrap lazy package manager if not installed
 local lazypath = vim.fn.stdpath "data" .. "/lazy/lazy.nvim"
 
 if not vim.uv.fs_stat(lazypath) then
@@ -14,7 +18,7 @@ vim.opt.rtp:prepend(lazypath)
 
 local lazy_config = require "configs.lazy"
 
--- load plugins
+-- Load plugins
 require("lazy").setup({ {
    "NvChad/NvChad",
    lazy = false,
@@ -24,13 +28,15 @@ require("lazy").setup({ {
    import = "plugins",
 } }, lazy_config)
 
--- load theme
+-- Load theme
 dofile(vim.g.base46_cache .. "defaults")
 dofile(vim.g.base46_cache .. "statusline")
 
+-- Load core configuration
 require "options"
 require "nvchad.autocmds"
 
+-- Load mappings after UI has started for better performance
 vim.schedule(function()
    require "mappings"
 end)

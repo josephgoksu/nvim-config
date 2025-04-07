@@ -1,5 +1,11 @@
+--[[
+  Kubernetes-related plugins
+  This file contains plugins specific to Kubernetes, Helm, and related technologies.
+--]]
+
 return {
-     {
+   -- Snippets for Kubernetes manifests
+   {
       "rafamadriz/friendly-snippets",
       config = function()
          require("luasnip.loaders.from_vscode").lazy_load {
@@ -7,6 +13,8 @@ return {
          }
       end
    },
+
+   -- Testing framework with Go adapter
    {
       "nvim-neotest/neotest",
       dependencies = {
@@ -20,18 +28,8 @@ return {
          }
       end
    },
-   {
-      "kvrohit/rasmus.nvim",
-      config = function()
-         require("rasmus").setup {
-            kubeconfig_path = "~/.kube/config",
-            context_priority = {
-               ["prod-.*"] = 0,
-               ["dev-.*"] = 1
-            }
-         }
-      end
-   },
+
+   -- Helm support
    {
       "towolf/vim-helm",
       ft = { "helm" },
@@ -45,6 +43,8 @@ return {
          })
       end
    },
+
+   -- JSON Schema support for YAML files
    {
       "b0o/schemastore.nvim",
       lazy = true,

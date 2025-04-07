@@ -1,87 +1,174 @@
+--[[
+  Plugin Configuration
+  This file defines all plugins and their configuration.
+  Plugins are organized by category for better maintainability.
+--]]
+
 local formatting = require "configs.formatting"
 
 return {
+   ----------------------------------------------------------
+   -- Core IDE Features
+   ----------------------------------------------------------
+
+   -- Formatting engine
    {
       "stevearc/conform.nvim",
       event = "BufWritePre",
+      cmd = { "ConformInfo" },
       opts = {
          formatters_by_ft = formatting.conform.formatters_by_ft,
          formatters = formatting.conform.formatters,
          format_on_save = formatting.conform.format_on_save,
       },
    },
+
+   -- Treesitter for better syntax handling
    {
       "nvim-treesitter/nvim-treesitter",
-      event = { "BufReadPre", "BufNewFile" },
+      event = { "BufReadPost", "BufNewFile" },
+      build = ":TSUpdate",
       config = function()
          require "configs.treesitter"
       end,
+      dependencies = {
+         -- Show code context at the top of the window
+         {
+            "nvim-treesitter/nvim-treesitter-context",
+            event = "BufReadPost",
+            opts = {
+               enable = true,
+               max_lines = 3,
+               min_window_height = 0,
+               line_numbers = true,
+               multiline_threshold = 20,
+               trim_scope = "outer",
+               mode = "cursor",
+               separator = nil,
+               zindex = 20,
+            },
+         },
+
+         -- Syntax aware text-objects
+         {
+            "nvim-treesitter/nvim-treesitter-textobjects",
+            event = "BufReadPost",
+         },
+      },
    },
+
+   -- LSP configuration
    {
       "neovim/nvim-lspconfig",
-      event = { "BufReadPre", "BufNewFile" },
+      event = { "BufReadPost", "BufNewFile" },
+      cmd = { "LspInfo", "LspInstall", "LspUninstall" },
       config = function()
          require("nvchad.configs.lspconfig").defaults()
          require "configs.lspconfig"
       end,
    },
+
+   -- Linting engine
    {
       "mfussenegger/nvim-lint",
-      event = { "BufReadPre", "BufNewFile" },
+      event = { "BufReadPost", "BufWritePost" },
       config = function()
          require "configs.lint"
+
+         -- Auto-lint on read and write
+         vim.api.nvim_create_autocmd({ "BufReadPost", "BufWritePost" }, {
+            callback = function()
+               require("lint").try_lint()
+            end,
+         })
       end,
    },
+
+   ----------------------------------------------------------
+   -- Mason Package Management
+   ----------------------------------------------------------
+
+   -- Formatter installation
    {
       "zapling/mason-conform.nvim",
       event = "VeryLazy",
-      dependencies = { "conform.nvim" },
+      dependencies = { "stevearc/conform.nvim" },
       config = function()
          require "configs.mason-conform"
       end,
    },
+
+   -- LSP server installation
    {
       "williamboman/mason-lspconfig.nvim",
       event = "VeryLazy",
-      dependencies = { "nvim-lspconfig" },
+      dependencies = { "neovim/nvim-lspconfig" },
       config = function()
          require "configs.mason-lspconfig"
       end,
    },
+
+   -- Linter installation
    {
       "rshkarin/mason-nvim-lint",
       event = "VeryLazy",
-      dependencies = { "nvim-lint" },
+      dependencies = { "mfussenegger/nvim-lint" },
       config = function()
          require "configs.mason-lint"
       end,
    },
-   {
-      "tpope/vim-fugitive",
-      cmd = { "Git", "G", "Gdiffsplit", "Gvdiffsplit", "Gwrite", "Gread" },
-      event = "VeryLazy",
-   },
+
+   ----------------------------------------------------------
+   -- UI Enhancements
+   ----------------------------------------------------------
+
+   -- Key binding helper
    {
       "folke/which-key.nvim",
-      event = "VeryLazy",
-      opts = {},
-      keys = {
-         {
-            "<leader>?",
-            function()
-               require("which-key").show { global = false }
-            end,
-            desc = "Buffer Local Keymaps (which-key)",
+      keys = { "<leader>", "<localleader>", "g", "z", "[", "]" },
+      cmd = "WhichKey",
+      opts = {
+         plugins = {
+            spelling = { enabled = true },
+            presets = { operators = true, motions = true, text_objects = true },
+         },
+         window = {
+            border = "rounded",
+            padding = { 1, 1, 1, 1 },
          },
       },
+      init = function()
+         vim.o.timeout = true
+         vim.o.timeoutlen = 300
+      end,
    },
+
+   -- Improved UI components
    {
       "stevearc/dressing.nvim",
-      opts = {},
+      lazy = true,
+      init = function()
+         ---@diagnostic disable-next-line: duplicate-set-field
+         vim.ui.select = function(...)
+            require("lazy").load({ plugins = { "dressing.nvim" } })
+            return vim.ui.select(...)
+         end
+         ---@diagnostic disable-next-line: duplicate-set-field
+         vim.ui.input = function(...)
+            require("lazy").load({ plugins = { "dressing.nvim" } })
+            return vim.ui.input(...)
+         end
+      end,
+      opts = function()
+         return require "configs.dressing"
+      end,
    },
+
+   -- Indentation guides
    {
       "lukas-reineke/indent-blankline.nvim",
       main = "ibl",
+      event = "BufReadPost",
       opts = {
          indent = {
             char = "│",
@@ -108,6 +195,8 @@ return {
          },
       },
    },
+
+   -- Rainbow parentheses
    {
       "HiPhish/rainbow-delimiters.nvim",
       event = "BufReadPost",
@@ -136,21 +225,8 @@ return {
          }
       end,
    },
-   {
-      "nvim-treesitter/nvim-treesitter-context",
-      event = "BufReadPre",
-      opts = {
-         enable = true,
-         max_lines = 3,
-         min_window_height = 0,
-         line_numbers = true,
-         multiline_threshold = 20,
-         trim_scope = "outer",
-         mode = "cursor",
-         separator = nil,
-         zindex = 20,
-      },
-   },
+
+   -- Enhanced diagnostics display
    {
       "folke/trouble.nvim",
       cmd = { "TroubleToggle", "Trouble" },
@@ -160,7 +236,6 @@ return {
          width = 50,
          icons = true,
          mode = "workspace_diagnostics",
-         severity = nil,
          fold_open = "",
          fold_closed = "",
          group = true,
@@ -189,11 +264,7 @@ return {
          multiline = true,
          indent_lines = true,
          win_config = { border = "single" },
-         auto_open = false,
-         auto_close = false,
          auto_preview = true,
-         auto_fold = false,
-         auto_jump = { "lsp_definitions" },
          use_diagnostic_signs = true,
       },
       keys = {
@@ -203,50 +274,70 @@ return {
          { "<leader>xQ", "<cmd>TroubleToggle quickfix<cr>", desc = "Quickfix List" },
       },
    },
+
+   ----------------------------------------------------------
+   -- Git Integration
+   ----------------------------------------------------------
+
+   {
+      "tpope/vim-fugitive",
+      cmd = { "Git", "G", "Gdiffsplit", "Gvdiffsplit", "Gwrite", "Gread" },
+   },
+
+   ----------------------------------------------------------
+   -- Debugging
+   ----------------------------------------------------------
+
+   -- Debug Adapter Protocol
    {
       "mfussenegger/nvim-dap",
-      event = "VeryLazy",
-   },
-   {
-      "leoluz/nvim-dap-go",
-      ft = "go",
-      dependencies = "mfussenegger/nvim-dap",
-      config = function(_, opts)
-         require("dap-go").setup(opts)
-
-         -- Add keymaps
-         vim.keymap.set("n", "<F5>", require("dap").continue)
-         vim.keymap.set("n", "<F10>", require("dap").step_over)
-         vim.keymap.set("n", "<F11>", require("dap").step_into)
-         vim.keymap.set("n", "<F12>", require("dap").step_out)
-         vim.keymap.set("n", "<leader>b", require("dap").toggle_breakpoint)
-      end,
-   },
-   {
-      "rcarriga/nvim-dap-ui",
-      event = "VeryLazy",
+      cmd = { "DapContinue", "DapToggleBreakpoint" },
       dependencies = {
-         "mfussenegger/nvim-dap",
-         "nvim-neotest/nvim-nio",
-      },
-      config = function()
-         local dap = require "dap"
-         local dapui = require "dapui"
-         dapui.setup()
+         -- UI for DAP
+         {
+            "rcarriga/nvim-dap-ui",
+            dependencies = { "nvim-neotest/nvim-nio" },
+            config = function()
+               local dap = require "dap"
+               local dapui = require "dapui"
+               dapui.setup()
 
-         -- Auto open/close DAP UI
-         dap.listeners.after.event_initialized["dapui_config"] = function()
-            dapui.open()
-         end
-         dap.listeners.before.event_terminated["dapui_config"] = function()
-            dapui.close()
-         end
-      end,
+               -- Auto open/close DAP UI
+               dap.listeners.after.event_initialized["dapui_config"] = function()
+                  dapui.open()
+               end
+               dap.listeners.before.event_terminated["dapui_config"] = function()
+                  dapui.close()
+               end
+            end,
+         },
+
+         -- Go debugging
+         {
+            "leoluz/nvim-dap-go",
+            ft = "go",
+            config = function(_, opts)
+               require("dap-go").setup(opts)
+
+               -- Add keymaps
+               vim.keymap.set("n", "<F5>", require("dap").continue, { desc = "Continue" })
+               vim.keymap.set("n", "<F10>", require("dap").step_over, { desc = "Step Over" })
+               vim.keymap.set("n", "<F11>", require("dap").step_into, { desc = "Step Into" })
+               vim.keymap.set("n", "<F12>", require("dap").step_out, { desc = "Step Out" })
+               vim.keymap.set("n", "<leader>b", require("dap").toggle_breakpoint, { desc = "Toggle Breakpoint" })
+            end,
+         },
+      },
    },
+
+   ----------------------------------------------------------
+   -- Language Support
+   ----------------------------------------------------------
+
+   -- Clojure
    {
       "Olical/conjure",
       ft = { "clojure", "edn" },
-      event = "LspAttach",
       init = function()
          local conjure = {
             ["conjure#filetype#rust"] = false,
@@ -265,34 +356,30 @@ return {
          for key, value in pairs(conjure) do
             vim.g[key] = value
          end
-         require("conjure.main").main()
       end,
    },
+
+   -- Paredit for structured editing
    {
       "julienvincent/nvim-paredit",
+      ft = { "clojure", "scheme", "lisp", "fennel" },
       config = function()
          local paredit = require "nvim-paredit"
          paredit.setup {
             keys = {
                ["<localleader>>"] = { paredit.api.slurp_forwards, "Slurp forwards" },
                ["<localleader>("] = { paredit.api.slurp_backwards, "Slurp backwards" },
-
                ["<localleader><"] = { paredit.api.barf_forwards, "Barf forwards" },
                ["<localleader>)"] = { paredit.api.barf_backwards, "Barf backwards" },
-
                [">e"] = { paredit.api.drag_element_forwards, "Drag element right" },
                ["<e"] = { paredit.api.drag_element_backwards, "Drag element left" },
-
                [">f"] = { paredit.api.drag_form_forwards, "Drag form right" },
                ["<f"] = { paredit.api.drag_form_backwards, "Drag form left" },
-
                ["<localleader>o"] = { paredit.api.raise_form, "Raise form" },
                ["<localleader>O"] = { paredit.api.raise_element, "Raise element" },
-
                ["E"] = {
                   paredit.api.move_to_next_element,
                   "Jump to next element tail",
-                  -- by default all keybindings are dot repeatable
                   repeatable = false,
                   mode = { "n", "x", "o", "v" },
                },
@@ -303,13 +390,11 @@ return {
                   mode = { "n", "x", "o", "v" },
                },
             },
-            indent = {
-               enabled = true,
-            },
+            indent = { enabled = true },
          }
       end,
    },
-   {
-      import = "plugins.kubernetes"
-   },
+
+   -- Kubernetes plugins
+   { import = "plugins.kubernetes" },
 }

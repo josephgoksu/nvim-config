@@ -4,35 +4,43 @@ local capabilities = require("nvchad.configs.lspconfig").capabilities
 
 local lspconfig = require "lspconfig"
 
+-- Global diagnostic keymaps
 vim.keymap.set("n", "<leader>e", vim.diagnostic.open_float)
 vim.keymap.set("n", "[d", vim.diagnostic.goto_prev)
 vim.keymap.set("n", "]d", vim.diagnostic.goto_next)
 vim.keymap.set("n", "<leader>q", vim.diagnostic.setloclist)
 
--- list of all servers configured.
-lspconfig.servers = { "lua_ls", "ts_ls", "gopls", "clojure_lsp", "prismals", "yamlls", "helm_ls", "terraformls", "dockerls" }
+-- Define all servers to be managed by mason-lspconfig
+lspconfig.servers = {
+   -- Custom configured servers
+   "lua_ls",
+   "gopls",
+   "ts_ls",
+   "eslint",
+   "yamlls",
+   "helm_ls",
+   "terraformls",
+   "dockerls",
+   "clojure_lsp",
+   "prismals",
 
--- list of servers configured with default config.
-local default_servers = { "html", "cssls", "clangd", "pyright", "bashls", "awk_ls" }
+   -- Default configured servers
+   "html",
+   "cssls",
+   "clangd",
+   "pyright",
+   "bashls",
+   "awk_ls"
+}
 
--- lsps with default config
-for _, lsp in ipairs(default_servers) do
-   lspconfig[lsp].setup {
-      on_attach = on_attach,
-      on_init = on_init,
-      capabilities = capabilities,
-   }
-end
-
+-- Unified LSP keybindings for all LSP servers
 vim.api.nvim_create_autocmd("LspAttach", {
    group = vim.api.nvim_create_augroup("UserLspConfig", {}),
    callback = function(ev)
       -- Enable completion triggered by <c-x><c-o>
       vim.bo[ev.buf].omnifunc = "v:lua.vim.lsp.omnifunc"
 
-      local opts = {
-         buffer = ev.buf,
-      }
+      local opts = { buffer = ev.buf }
       vim.keymap.set("n", "gD", vim.lsp.buf.declaration, opts)
       vim.keymap.set("n", "gd", vim.lsp.buf.definition, opts)
       vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
@@ -48,23 +56,22 @@ vim.api.nvim_create_autocmd("LspAttach", {
       vim.keymap.set({ "n", "v" }, "<leader>ca", vim.lsp.buf.code_action, opts)
       vim.keymap.set("n", "gr", vim.lsp.buf.references, opts)
       vim.keymap.set("n", "<leader>f", function()
-         vim.lsp.buf.format {
-            async = true,
-         }
+         vim.lsp.buf.format { async = true }
       end, opts)
    end,
 })
 
+-- Setup servers with custom configurations
+
+-- Lua LSP
 lspconfig.lua_ls.setup {
    on_attach = on_attach,
    on_init = on_init,
    capabilities = capabilities,
-
    settings = {
       Lua = {
          diagnostics = {
             enable = false, -- Disable all diagnostics from lua_ls
-            -- globals = { "vim" },
          },
          workspace = {
             library = {
@@ -81,6 +88,7 @@ lspconfig.lua_ls.setup {
    },
 }
 
+-- Go LSP
 lspconfig.gopls.setup {
    on_attach = function(client, bufnr)
       client.server_capabilities.documentFormattingProvider = false
@@ -94,9 +102,7 @@ lspconfig.gopls.setup {
    root_dir = lspconfig.util.root_pattern("go.work", "go.mod", ".git"),
    settings = {
       gopls = {
-         analyses = {
-            unusedparams = true,
-         },
+         analyses = { unusedparams = true },
          completeUnimported = true,
          usePlaceholders = true,
          staticcheck = true,
@@ -104,15 +110,14 @@ lspconfig.gopls.setup {
    },
 }
 
+-- TypeScript LSP
 lspconfig.ts_ls.setup {
    on_attach = on_attach,
    on_init = on_init,
    capabilities = capabilities,
 }
 
-lspconfig.r_language_server.setup {}
-
--- Add ESLint configuration
+-- ESLint
 lspconfig.eslint.setup {
    on_attach = function(client, bufnr)
       client.server_capabilities.documentFormattingProvider = true
@@ -127,21 +132,12 @@ lspconfig.eslint.setup {
    on_init = on_init,
    capabilities = capabilities,
    settings = {
-      workingDirectory = {
-         mode = "auto",
-      },
-
-      format = {
-         enable = true,
-      },
+      workingDirectory = { mode = "auto" },
+      format = { enable = true },
    },
 }
 
-require("lspconfig").clojure_lsp.setup {}
-
-require("lspconfig").prismals.setup {}
-
--- Kubernetes-specific YAML configuration
+-- YAML LSP with Kubernetes schemas
 lspconfig.yamlls.setup {
    on_attach = on_attach,
    capabilities = capabilities,
@@ -164,7 +160,7 @@ lspconfig.yamlls.setup {
    }
 }
 
--- Add Helm LSP configuration
+-- Helm LSP
 lspconfig.helm_ls.setup {
    on_attach = on_attach,
    capabilities = capabilities,
@@ -176,3 +172,19 @@ lspconfig.helm_ls.setup {
       }
    }
 }
+
+-- Simple LSP setups
+local simple_servers = {
+   "terraformls", "dockerls", "clojure_lsp", "prismals", "html", "cssls",
+   "clangd", "pyright", "bashls", "awk_ls"
+}
+
+for _, server in ipairs(simple_servers) do
+   if not lspconfig[server].setup_called then
+      lspconfig[server].setup {
+         on_attach = on_attach,
+         on_init = on_init,
+         capabilities = capabilities,
+      }
+   end
+end
