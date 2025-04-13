@@ -91,6 +91,7 @@ lspconfig.lua_ls.setup {
 -- Go LSP
 lspconfig.gopls.setup {
    on_attach = function(client, bufnr)
+      -- Explicitly disable formatting from gopls as we're using external formatters
       client.server_capabilities.documentFormattingProvider = false
       client.server_capabilities.documentRangeFormattingProvider = false
       on_attach(client, bufnr)

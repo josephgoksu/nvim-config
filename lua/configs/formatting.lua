@@ -14,7 +14,7 @@ local M = {}
 M.conform = {
    formatters_by_ft = {
       lua = { "stylua" },
-      go = { "gofumpt", "goimports-reviser", "golines" },
+      go = { "gofumpt", "goimports" },
       css = { "prettier" },
       html = { "prettier" },
       javascript = { "prettier" },
@@ -31,12 +31,6 @@ M.conform = {
    },
 
    formatters = {
-      ["goimports-reviser"] = {
-         prepend_args = { "-rm-unused" },
-      },
-      golines = {
-         prepend_args = { "--max-len=80" },
-      },
       prettier = {
          formatCommand = 'prettierd "${INPUT}"',
          formatStdin = true,
@@ -63,8 +57,9 @@ M.conform = {
    },
 
    format_on_save = {
-      timeout_ms = 500,
-      lsp_fallback = true,
+      timeout_ms = 2000,
+      lsp_fallback = false,
+      async = false,
    },
 }
 
